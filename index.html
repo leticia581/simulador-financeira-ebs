@@ -1,0 +1,319 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Simulador Financeira EBS</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Libre+Franklin:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head><body>
+<style>
+:root{--lime:#D5DE45;--ink:#343933;--sand:#B4AC8A;--olive:#6E6F57;--off:#EDEDE3;--red:#9b3b2b}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Libre Franklin',sans-serif;color:var(--ink);background:#fff;padding:28px 32px 60px}
+h1{font-family:'Instrument Serif';font-weight:400;font-size:40px}
+.sub{color:var(--olive);font-size:14px;margin:2px 0 24px}
+h2{font-family:'Instrument Serif';font-weight:400;font-size:28px;margin:34px 0 12px}
+.wrap{display:grid;grid-template-columns:300px 1fr;gap:30px;align-items:start}
+.panel{background:var(--off);padding:20px 22px;border-top:3px solid var(--ink);position:sticky;top:16px;max-height:calc(100vh - 32px);overflow-y:auto}
+.panel h3{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--olive);margin:16px 0 6px}
+.panel h3:first-child{margin-top:0}
+label{display:block;font-size:13px;margin:8px 0 3px}
+input,select{width:100%;padding:7px 9px;border:1px solid #bbb;font:inherit;font-size:15px;background:#fff}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hint{font-size:11.5px;color:var(--olive);margin-top:3px;line-height:1.35}
+.off{opacity:.35;pointer-events:none}
+button{margin-top:18px;width:100%;background:var(--ink);color:var(--lime);border:0;padding:12px;font:inherit;font-weight:600;font-size:14px;cursor:pointer}
+.flow{width:100%;height:auto;display:block}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:var(--off);padding:16px 18px;border-top:3px solid var(--ink)}
+.card.hi{background:var(--lime)}
+.card h4{font-family:'Instrument Serif';font-weight:400;font-size:24px}
+.card .big{font-family:'Instrument Serif';font-size:30px;margin:4px 0 2px}
+.card .cap{font-size:12.5px;color:var(--ink);margin-bottom:10px}
+table{border-collapse:collapse;width:100%}
+.card td{font-size:13px;padding:5px 2px;border-bottom:1px solid rgba(0,0,0,.08)}
+.card td:last-child{text-align:right;white-space:nowrap}
+.tot td{font-weight:700;border-top:2px solid var(--ink)}
+.neg{color:var(--red)}
+.leit{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.lc{border-top:3px solid var(--ink);padding-top:10px}
+.lc h4{font-family:'Instrument Serif';font-weight:400;font-size:22px;margin-bottom:6px}
+.lc .g,.lc .p{font-size:13.5px;line-height:1.5;padding:6px 0 6px 12px;margin-bottom:6px}
+.lc .g{border-left:4px solid var(--lime)}
+.lc .p{border-left:4px solid var(--red)}
+.lc b.t{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--olive)}
+.ideal{background:var(--ink);color:#fff;padding:22px 26px;margin-top:20px}
+.ideal h4{font-family:'Instrument Serif';font-weight:400;font-size:26px;color:var(--lime);margin-bottom:8px}
+.ideal p{font-size:14.5px;line-height:1.55;margin-bottom:8px;max-width:980px}
+.prz th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--olive);text-align:right;padding:6px 8px;border-bottom:2px solid var(--ink)}
+.prz th:first-child,.prz td:first-child{text-align:left}
+.prz td{font-size:13.5px;padding:6px 8px;border-bottom:1px solid #e2e2da;text-align:right}
+.prz tr.out td{color:#aaa}
+.prz tr.sug td{background:var(--lime);font-weight:600}
+.prz tr.sel td{outline:2px solid var(--ink)}
+#tab tr{cursor:pointer}
+.tag{display:inline-block;background:var(--ink);color:var(--lime);font-size:10.5px;padding:2px 6px;margin-left:6px;vertical-align:2px}
+.resumo{display:none;font-size:13px;margin-bottom:12px;color:var(--olive)}
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--ink);margin-bottom:18px}.tb{width:auto;margin:0;background:#fff;color:var(--ink);border:0;padding:11px 18px;font-weight:600;font-size:14px}.tb.on{background:var(--ink);color:var(--lime)}
+body{padding:0 40px 40px;max-width:1440px;margin:0 auto}
+.top{display:flex;align-items:center;gap:28px;background:var(--ink);color:#fff;margin:0 -40px;padding:22px 40px}
+.top .lg{height:26px;width:auto;color:#fff;flex:none}
+.top .tt{flex:1;border-left:1px solid rgba(255,255,255,.25);padding-left:28px}
+.top .ey{font-size:12px;color:#a9aa9c;margin-top:3px}
+.top h1{font-size:34px;color:#fff;margin-top:2px}
+.top .dt{font-size:13px;color:#cfcfc3}
+.sub{margin:18px 0 22px}
+.panel{background:#F6F6F0;border-top:0;border-left:3px solid var(--lime)}
+.hero{background:var(--ink);color:#fff;padding:26px 30px;display:grid;grid-template-columns:2.2fr 1fr 1fr 1fr;gap:20px;align-items:end}
+.hero div{color:#cfcfc3}.hero b{color:#fff}
+.hero div div:first-child{color:var(--lime)!important}
+.hero div[style*="Instrument"]{color:#fff!important;font-size:48px!important;white-space:nowrap}
+.card{background:#fff;border:1px solid #e2e2da;border-top:3px solid var(--ink)}
+.card.hi{background:var(--lime);border-color:var(--lime)}
+h2{font-size:26px;margin:30px 0 12px}
+.disc{margin-top:46px;border-top:1px solid #d8d8cf;padding-top:16px;font-size:11.5px;line-height:1.6;color:var(--olive)}
+.disc .dl span{margin-right:4px}
+.disc .fl{display:flex;align-items:center;gap:16px;margin-top:16px}
+.disc .lg{height:16px;width:auto;color:var(--ink)}
+@media print{.top{margin:0;padding:14px 18px}.hero div[style*="Instrument"]{font-size:36px!important}.tp{display:block!important}#tab,#tab+p{display:none}@page{size:A4;margin:12mm}body{padding:0}.panel,.noprint{display:none!important}.wrap{display:block}.resumo{display:block}h1{font-size:30px}h2{font-size:22px;margin:18px 0 8px;break-after:avoid}.card,.lc,.ideal,.flow{break-inside:avoid}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}.cards,.leit{grid-template-columns:repeat(3,1fr)!important;gap:10px}.card .big{font-size:22px}.card td,.lc .g,.lc .p{font-size:11px}.ideal p{font-size:12.5px}}
+@media(max-width:900px){.wrap,.cards,.leit{grid-template-columns:1fr}.panel{position:static}}
+/* artefato: celular, PDF e simulações salvas */
+:root{color-scheme:light}
+body{background:#fff;color:var(--ink);padding-block:0 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top{margin:0 0 0;padding:20px 24px}
+.sx{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.sx table{min-width:560px}
+.wrap>div{min-width:0}
+.pdfbox{background:var(--lime);padding:14px 16px;margin-bottom:6px}
+.pdfbox label{margin-top:0;font-weight:600}
+.pdfbox input[type=file]{background:transparent;border:0;padding:6px 0;font-size:13px}
+.pdfres{font-size:12.5px;line-height:1.5;margin-top:6px}
+.pdfres.err{color:var(--red)}
+.salvas{margin-top:12px;font-size:12.5px}
+.salvas button{width:100%;margin-top:6px;background:#fff;color:var(--ink);border:1px solid #cfcfc3;text-align:left;padding:8px 10px;font-weight:400;font-size:12.5px}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+@media(max-width:900px){
+ .top{flex-wrap:wrap;gap:14px;padding:16px}.top .tt{border-left:0;padding-left:0;flex-basis:100%}.top h1{font-size:28px}
+ .hero{grid-template-columns:1fr 1fr;padding:20px}.hero>div:first-child{grid-column:1/-1}
+ .hero div[style*="Instrument"]{font-size:38px!important;white-space:normal}
+ .tabs{flex-wrap:wrap}.tb{flex:1 1 auto;font-size:13px}
+ .panel{max-height:none;overflow:visible}
+}
+</style>
+<header class="top"><svg class="lg"  viewBox="0 0 1218 292" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_120_13)">
+<path d="M366.939 257.613V251.218L376.171 247.439C383.741 244.13 385.636 241.529 385.636 234.428V118.732C385.636 111.632 383.741 108.794 376.171 105.721L366.939 101.942V95.548H490.441L493.043 133.874H486.649L479.314 122.04C471.272 109.5 468.435 107.604 457.555 107.604H410.482V173.376H446.676C453.776 173.376 456.613 171.246 459.686 163.909L463.701 154.455H469.847V206.262H463.701L459.921 196.09C456.613 187.564 453.776 185.446 446.676 185.446H410.482V234.415C410.482 240.809 412.612 243.399 421.125 246.955L431.769 251.218V257.613H366.939Z" fill="currentColor"/>
+<path d="M498.966 257.613V251.465L508.433 247.91C515.299 245.071 517.429 242.47 517.429 234.663V172.918C517.429 162.981 514.827 159.437 508.198 158.247L499.45 156.351V150.441L534.938 136.476L540.614 139.784V234.65C540.614 242.457 542.509 245.06 549.361 247.897L558.828 251.454V257.6H498.966V257.613ZM510.552 99.5751C510.552 89.6373 518.359 82.5497 527.59 82.5497C536.821 82.5497 544.628 89.6498 544.628 99.5751C544.628 109.5 537.528 116.848 527.59 116.848C517.653 116.848 510.552 109.042 510.552 99.5751Z" fill="currentColor"/>
+<path d="M563.561 257.613V251.465L573.028 247.91C580.128 245.073 582.024 242.234 582.024 234.663V173.86C582.024 164.158 579.658 160.131 572.793 158.718L564.044 156.822V151.147L597.637 136.476L603.077 139.784V162.968C614.674 146.401 630.758 136.476 647.078 136.476C671.686 136.476 687.063 153.749 687.063 182.138V234.651C687.063 242.221 688.96 245.06 695.825 247.897L705.279 251.454V257.6H646.135V251.454L655.602 247.897C661.996 245.296 663.88 242.693 663.88 234.651V187.094C663.88 166.513 654.413 155.633 637.14 155.633C625.307 155.633 613.249 162.497 605.207 173.141V234.651C605.207 242.693 606.868 245.296 613.485 247.897L622.952 251.454V257.6H563.574L563.561 257.613Z" fill="currentColor"/>
+<path d="M712.143 247.438L714.981 219.991H721.364L726.815 231.108C732.961 242.456 742.899 248.851 755.909 248.851C769.873 248.851 779.329 241.751 779.329 230.165C779.329 220.462 773.182 213.599 749.045 204.144C724.906 194.677 714.498 183.327 714.498 168.42C714.498 149.263 731.3 136.488 756.616 136.488C769.873 136.488 784.768 139.796 795.66 144.765L793.058 170.316H786.677C783.356 164.17 780.765 160.378 777.446 156.599C772.477 150.924 764.906 147.603 756.851 147.603C743.84 147.603 735.562 153.761 735.562 162.51C735.562 171.257 742.428 176.946 765.847 187.118C791.398 197.997 800.865 209.36 800.865 224.019C800.865 245.555 782.179 259.978 754.732 259.978C739.591 259.978 723.258 255.48 712.143 247.438Z" fill="currentColor"/>
+<path d="M814.358 199.893C814.358 161.803 838.955 136.488 873.736 136.488C889.349 136.488 902.595 140.751 915.607 149.028L912.534 179.076H905.668C902.36 170.564 899.994 165.359 896.437 160.155C890.291 151.171 883.19 147.851 873.959 147.851C854.084 147.851 839.661 168.197 839.661 197.527C839.661 226.857 855.745 244.614 880.589 244.614C890.998 244.614 901.877 240.834 910.637 234.204L916.312 241.539C904.008 254.079 889.82 259.991 872.077 259.991C836.352 259.991 814.345 237.277 814.345 199.906L814.358 199.893Z" fill="currentColor"/>
+<path d="M927.936 227.093C927.936 211.245 938.58 199.412 957.278 193.03C968.393 189.251 982.829 187.119 997.97 186.413V179.548C997.97 157.777 990.399 148.087 975.728 148.087C969.582 148.087 963.659 149.264 958.926 152.349C954.899 154.951 952.062 159.45 947.328 173.167H938.815L931.716 152.114C947.798 141.235 962.47 136.501 978.567 136.501C1007.9 136.501 1021.16 148.805 1021.16 180.032V228.766C1021.16 237.042 1023.29 239.881 1031.09 240.835L1039.61 241.776L1040.79 247.923L1010.04 259.992H1004.84L998.925 242.483C990.648 253.126 977.388 259.992 964.613 259.992C942.372 259.992 927.949 246.981 927.949 227.106L927.936 227.093ZM997.958 231.591V196.103C988.021 196.573 979.272 197.762 972.644 199.646C959.161 203.425 952.062 211.48 952.062 223.3C952.062 235.122 960.574 243.413 973.585 243.413C981.627 243.413 990.858 239.397 997.946 231.578L997.958 231.591Z" fill="currentColor"/>
+<path d="M1042.44 257.612V251.465L1051.91 247.91C1058.77 245.073 1060.9 242.469 1060.9 234.663V116.377C1060.9 106.675 1058.3 103.367 1051.67 101.942L1042.92 100.046V93.8998L1078.41 80.1705L1084.09 83.4788V234.65C1084.09 242.457 1085.98 245.06 1092.85 247.897L1102.3 251.454V257.6H1042.44V257.612Z" fill="currentColor"/>
+<path d="M1111.54 198.704C1111.54 163.922 1134.72 136.488 1166.9 136.488C1196.48 136.488 1217.06 155.409 1218 189.721V194.924H1136.62V197.997C1136.62 228.282 1152.23 244.614 1177.31 244.614C1190.32 244.614 1200.02 240.586 1209.48 233.969L1215.16 241.305C1202.86 253.138 1187.01 259.991 1168.09 259.991C1133.54 259.991 1111.55 238.455 1111.55 198.717L1111.54 198.704ZM1194.33 183.327C1193.63 161.791 1183.45 147.603 1167.37 147.603C1151.29 147.603 1140.39 161.085 1137.32 184.045L1194.33 183.34V183.327Z" fill="currentColor"/>
+<path d="M106.353 0L0 177.268V289.94H112.673L289.94 183.587V0H106.353ZM274.946 171.853H118.1V15.0057H274.946V171.853ZM118.1 186.846H255.369L118.1 269.21V186.846ZM103.107 171.853H20.7428L103.107 34.5837V171.853ZM14.9933 186.846H103.107V274.959H14.9933V186.846Z" fill="currentColor"/>
+</g>
+<defs>
+<clipPath id="clip0_120_13">
+<rect width="1218" height="291.365" fill="white"/>
+</clipPath>
+</defs>
+</svg>
+<div class="tt"><h1>Simulador Financeira EBS</h1><div class="ey">Preparado pela Finscale para a EBS Engenharia</div></div></header>
+<p class="sub">O comprador refinancia o saldo com a Financeira EBS por CCB, e a Financeira paga a EBS Construtora. Valores por contrato, antes de custos fixos.</p>
+<div class="wrap">
+<div class="panel">
+  <div class="pdfbox"><label for="pdf">Ler o saldo de um PDF do Sienge</label>
+  <input id="pdf" type="file" accept="application/pdf">
+  <div class="pdfres" id="pdfres">Relatório "Saldo Devedor Presente". O arquivo é lido só neste aparelho e não é enviado a lugar nenhum.</div></div>
+  <h3>O contrato</h3>
+  <label>Saldo a refinanciar (R$)</label><input id="saldo" class="dec" type="text" inputmode="decimal" value="100.000,00">
+  <label>Juros cobrados do comprador (% a.m.)</label><input id="tj" class="dec" type="text" inputmode="decimal" value="1,30">
+  <div class="hint" id="refTxt"></div>
+  <div class="row2">
+    <div><label>Parcela mínima (R$)</label><input id="pmin" class="dec" type="text" inputmode="decimal" value="1.000,00"></div>
+    <div><label>Parcela máxima (R$)</label><input id="pmax" class="dec" type="text" inputmode="decimal" value="2.500,00"></div>
+  </div>
+  <label>Prazo máximo (meses)</label><input id="nmax" type="number" value="120">
+  <h3>Custo da bancarização</h3>
+  <label>Emissão da CCB (% do saldo)</label><input id="ccb" class="dec" type="text" inputmode="decimal" value="1,00" readonly style="background:#e4e4da;color:#6E6F57">
+  <div class="hint">Fixo pela Finscale.</div>
+  <h3>Como a Construtora recebe</h3>
+  <select id="modo"><option value="mensal">A prazo: por mês, sem juros</option><option value="vista">À vista: a Financeira antecipa</option></select>
+  <div id="boxVista">
+    <label>Custo do dinheiro da Financeira (% do CDI)</label><input id="pcdi" class="dec" type="text" inputmode="decimal" value="100,00">
+    <div class="hint">Para pagar à vista, a Financeira usa dinheiro (Trinus, sócio ou caixa do grupo) e paga esse custo. <span id="cdiTxt"></span></div>
+    <label>Antecipação cobrada da Construtora: CDI + (% a.m.)</label><input id="spr" class="dec" type="text" inputmode="decimal" value="0,30">
+    <div class="hint">Receita complementar da Financeira. <span id="antTxt"></span></div>
+  </div>
+  <h3>Premissas de mercado</h3>
+  <label>CDI (% a.a.)</label><input id="cdi" class="dec" type="text" inputmode="decimal" value="13,65" readonly style="background:#e4e4da;color:#6E6F57">
+  <div class="hint">Dado público: CDI de 12/11/2026 (Banco Central). Selic meta 13,75%.</div>
+  <h3>Para o ganho real</h3>
+  <label>Inflação (IPCA 12 meses, %)</label><input id="ipca" class="dec" type="text" inputmode="decimal" value="4,63" readonly style="background:#e4e4da;color:#6E6F57">
+  <div class="hint">Dado público: IPCA acumulado até outubro de 2026 (IBGE). Tira a inflação do ganho para mostrar quanto ele vale em dinheiro de hoje.</div>
+  <button id="btnSalvar">Salvar simulação</button>
+  <div class="salvas" id="salvas"></div>
+</div>
+<div>
+  <div class="resumo" id="resumo"></div>
+  <div class="tabs noprint"><button class="tb on" data-t="t1">Simulador</button><button class="tb" data-t="t2">Como funciona: o dinheiro e a receita de cada parte</button></div>
+  <div id="t1" class="tp">
+  <div id="sug"></div>
+  <h2>Quanto fica com cada um</h2>
+  <div class="cards" id="cards"></div>
+  <h2>Escolha o prazo</h2>
+  <div class="sx"><table class="prz" id="tab"><thead><tr><th>Parcelas</th><th>Parcela</th><th>Total pago</th><th>Juros</th><th>Fica na Financeira</th></tr></thead><tbody></tbody></table></div>
+  <p class="hint" style="margin-top:8px">Em verde, o menor prazo com parcela dentro da faixa. Clique em outra linha para comparar.</p>
+  </div>
+  <div id="t2" class="tp" style="display:none">
+  <h2 style="margin-top:6px">Para onde vai o dinheiro</h2>
+  <div class="sx"><svg class="flow" id="flow" viewBox="0 0 960 330" style="min-width:640px"></svg></div>
+  <h2>Leitura da operação</h2>
+  <div class="leit" id="leit"></div>
+  <div class="ideal" id="ideal"></div>
+  <h2>Ano a ano</h2>
+  <div class="sx"><table class="prz" id="anos"></table></div>
+  </div>
+</div></div>
+<footer class="disc"><div class="dl"><b>Como calculamos.</b> <span id="regras"></span></div><div class="fl"><svg class="lg"  viewBox="0 0 1218 292" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_120_13)">
+<path d="M366.939 257.613V251.218L376.171 247.439C383.741 244.13 385.636 241.529 385.636 234.428V118.732C385.636 111.632 383.741 108.794 376.171 105.721L366.939 101.942V95.548H490.441L493.043 133.874H486.649L479.314 122.04C471.272 109.5 468.435 107.604 457.555 107.604H410.482V173.376H446.676C453.776 173.376 456.613 171.246 459.686 163.909L463.701 154.455H469.847V206.262H463.701L459.921 196.09C456.613 187.564 453.776 185.446 446.676 185.446H410.482V234.415C410.482 240.809 412.612 243.399 421.125 246.955L431.769 251.218V257.613H366.939Z" fill="currentColor"/>
+<path d="M498.966 257.613V251.465L508.433 247.91C515.299 245.071 517.429 242.47 517.429 234.663V172.918C517.429 162.981 514.827 159.437 508.198 158.247L499.45 156.351V150.441L534.938 136.476L540.614 139.784V234.65C540.614 242.457 542.509 245.06 549.361 247.897L558.828 251.454V257.6H498.966V257.613ZM510.552 99.5751C510.552 89.6373 518.359 82.5497 527.59 82.5497C536.821 82.5497 544.628 89.6498 544.628 99.5751C544.628 109.5 537.528 116.848 527.59 116.848C517.653 116.848 510.552 109.042 510.552 99.5751Z" fill="currentColor"/>
+<path d="M563.561 257.613V251.465L573.028 247.91C580.128 245.073 582.024 242.234 582.024 234.663V173.86C582.024 164.158 579.658 160.131 572.793 158.718L564.044 156.822V151.147L597.637 136.476L603.077 139.784V162.968C614.674 146.401 630.758 136.476 647.078 136.476C671.686 136.476 687.063 153.749 687.063 182.138V234.651C687.063 242.221 688.96 245.06 695.825 247.897L705.279 251.454V257.6H646.135V251.454L655.602 247.897C661.996 245.296 663.88 242.693 663.88 234.651V187.094C663.88 166.513 654.413 155.633 637.14 155.633C625.307 155.633 613.249 162.497 605.207 173.141V234.651C605.207 242.693 606.868 245.296 613.485 247.897L622.952 251.454V257.6H563.574L563.561 257.613Z" fill="currentColor"/>
+<path d="M712.143 247.438L714.981 219.991H721.364L726.815 231.108C732.961 242.456 742.899 248.851 755.909 248.851C769.873 248.851 779.329 241.751 779.329 230.165C779.329 220.462 773.182 213.599 749.045 204.144C724.906 194.677 714.498 183.327 714.498 168.42C714.498 149.263 731.3 136.488 756.616 136.488C769.873 136.488 784.768 139.796 795.66 144.765L793.058 170.316H786.677C783.356 164.17 780.765 160.378 777.446 156.599C772.477 150.924 764.906 147.603 756.851 147.603C743.84 147.603 735.562 153.761 735.562 162.51C735.562 171.257 742.428 176.946 765.847 187.118C791.398 197.997 800.865 209.36 800.865 224.019C800.865 245.555 782.179 259.978 754.732 259.978C739.591 259.978 723.258 255.48 712.143 247.438Z" fill="currentColor"/>
+<path d="M814.358 199.893C814.358 161.803 838.955 136.488 873.736 136.488C889.349 136.488 902.595 140.751 915.607 149.028L912.534 179.076H905.668C902.36 170.564 899.994 165.359 896.437 160.155C890.291 151.171 883.19 147.851 873.959 147.851C854.084 147.851 839.661 168.197 839.661 197.527C839.661 226.857 855.745 244.614 880.589 244.614C890.998 244.614 901.877 240.834 910.637 234.204L916.312 241.539C904.008 254.079 889.82 259.991 872.077 259.991C836.352 259.991 814.345 237.277 814.345 199.906L814.358 199.893Z" fill="currentColor"/>
+<path d="M927.936 227.093C927.936 211.245 938.58 199.412 957.278 193.03C968.393 189.251 982.829 187.119 997.97 186.413V179.548C997.97 157.777 990.399 148.087 975.728 148.087C969.582 148.087 963.659 149.264 958.926 152.349C954.899 154.951 952.062 159.45 947.328 173.167H938.815L931.716 152.114C947.798 141.235 962.47 136.501 978.567 136.501C1007.9 136.501 1021.16 148.805 1021.16 180.032V228.766C1021.16 237.042 1023.29 239.881 1031.09 240.835L1039.61 241.776L1040.79 247.923L1010.04 259.992H1004.84L998.925 242.483C990.648 253.126 977.388 259.992 964.613 259.992C942.372 259.992 927.949 246.981 927.949 227.106L927.936 227.093ZM997.958 231.591V196.103C988.021 196.573 979.272 197.762 972.644 199.646C959.161 203.425 952.062 211.48 952.062 223.3C952.062 235.122 960.574 243.413 973.585 243.413C981.627 243.413 990.858 239.397 997.946 231.578L997.958 231.591Z" fill="currentColor"/>
+<path d="M1042.44 257.612V251.465L1051.91 247.91C1058.77 245.073 1060.9 242.469 1060.9 234.663V116.377C1060.9 106.675 1058.3 103.367 1051.67 101.942L1042.92 100.046V93.8998L1078.41 80.1705L1084.09 83.4788V234.65C1084.09 242.457 1085.98 245.06 1092.85 247.897L1102.3 251.454V257.6H1042.44V257.612Z" fill="currentColor"/>
+<path d="M1111.54 198.704C1111.54 163.922 1134.72 136.488 1166.9 136.488C1196.48 136.488 1217.06 155.409 1218 189.721V194.924H1136.62V197.997C1136.62 228.282 1152.23 244.614 1177.31 244.614C1190.32 244.614 1200.02 240.586 1209.48 233.969L1215.16 241.305C1202.86 253.138 1187.01 259.991 1168.09 259.991C1133.54 259.991 1111.55 238.455 1111.55 198.717L1111.54 198.704ZM1194.33 183.327C1193.63 161.791 1183.45 147.603 1167.37 147.603C1151.29 147.603 1140.39 161.085 1137.32 184.045L1194.33 183.34V183.327Z" fill="currentColor"/>
+<path d="M106.353 0L0 177.268V289.94H112.673L289.94 183.587V0H106.353ZM274.946 171.853H118.1V15.0057H274.946V171.853ZM118.1 186.846H255.369L118.1 269.21V186.846ZM103.107 171.853H20.7428L103.107 34.5837V171.853ZM14.9933 186.846H103.107V274.959H14.9933V186.846Z" fill="currentColor"/>
+</g>
+<defs>
+<clipPath id="clip0_120_13">
+<rect width="1218" height="291.365" fill="white"/>
+</clipPath>
+</defs>
+</svg>
+<span>Confidencial · Simulação ilustrativa, não é proposta de crédito · Finscale 2026</span></div></footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+if(window.pdfjsLib){try{const b=new Blob(["importScripts('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js')"],{type:'application/javascript'});pdfjsLib.GlobalWorkerOptions.workerSrc=URL.createObjectURL(b)}catch(e){}}
+</script>
+<script>
+const $=id=>document.getElementById(id);
+const R=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL',minimumFractionDigits:2,maximumFractionDigits:2});
+const P2=v=>v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const pmt=(P,i,n)=>i===0?P/n:P*i/(1-Math.pow(1+i,-n));
+let sel=null;
+const num=t=>{t=String(t).trim();if(t.includes(','))t=t.replace(/\./g,'').replace(',','.');return parseFloat(t)||0};
+function get(){const p={modo:$('modo').value};['saldo','tj','pmin','pmax','nmax','ccb','ipca','cdi','pcdi','spr'].forEach(k=>p[k]=num($(k).value));
+  const cm=(Math.pow(1+p.cdi/100,1/12)-1)*100;p.cdim=cm;p.tcap=cm*p.pcdi/100;p.des=cm+p.spr;
+    $('refTxt').innerHTML=`Para comparar: hoje, depois do habite-se, o comprador paga IGP-M + 1% (≈ 1,38% a.m.). O dinheiro custa ${P2(cm*p.pcdi/100)}% a.m. (CDI).`;
+  $('cdiTxt').textContent=`Hoje: ${P2(p.tcap)}% a.m.`;$('antTxt').textContent=`Hoje: ${P2(p.des)}% a.m.`;return p}
+function taxa(n,p){return p.tj}
+function calc(n,p){
+  const tj=taxa(n,p),P=p.saldo,i=tj/100,parc=pmt(P,i,n),total=parc*n,juros=total-P,ccb=P*p.ccb/100,vista=p.modo==='vista';
+  const ta=p.des/100;let vpr=0;for(let t=1;t<=n;t++)vpr+=(P/n)/Math.pow(1+ta,t);const des=vista?P-vpr:0,emp=vista?P-des:0;let jf=0;const anos=[];
+  let sb=P,se=emp;const fl=[];const im=Math.pow(1+p.ipca/100,1/12)-1;
+  for(let t=0;t<n;t++){const a=Math.floor(t/12);anos[a]=anos[a]||{comp:0,cons:0,dev:0,fin:0};const y=anos[a];
+    const am=parc-sb*i;sb-=am;y.comp+=parc;
+    if(vista){const j=se*p.tcap/100,ae=am*emp/P;se-=ae;jf+=j;y.dev+=j+ae;y.fin+=parc-j-ae;fl.push(parc-j-ae);}
+    else{y.cons+=P/n;y.fin+=parc-P/n;fl.push(parc-P/n);}}
+  anos[0].fin-=ccb;if(vista){anos[0].cons=P-des;anos[0].fin+=des;}
+  const fin=juros+des-jf-ccb,cons=P-des;let real=-ccb;fl.forEach((f,t)=>real+=f/Math.pow(1+im,t+1));
+  return {n,tj,real,parc,total,juros,ccb,des,emp,jf,fin,cons,anos,rep:P/n};
+}
+function box(x,y,w,h,t,s,fill){return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}"/><text x="${x+w/2}" y="${y+h/2-4}" text-anchor="middle" font-family="Instrument Serif" font-size="24" fill="#343933">${t}</text><text x="${x+w/2}" y="${y+h/2+18}" text-anchor="middle" font-size="12" fill="#343933">${s}</text>`}
+function arrow(x1,y,x2,l1,l2){const mx=(x1+x2)/2;return `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="#343933" stroke-width="2.5" marker-end="url(#ah)"/><text x="${mx}" y="${y-12}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#343933">${l1}</text><text x="${mx}" y="${y+22}" text-anchor="middle" font-size="11.5" fill="#6E6F57">${l2}</text>`}
+function flow(r,p){
+  const v=p.modo==='vista';let g=`<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#343933"/></marker><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#9b3b2b"/></marker></defs>`;
+  g+=box(10,90,200,90,'Comprador','refinancia por CCB','#EDEDE3');
+  g+=box(380,90,200,90,'Financeira EBS','fica com os juros','#D5DE45');
+  g+=box(750,90,200,90,'EBS Construtora','recebe o saldo','#EDEDE3');
+  g+=arrow(212,135,376,`${r.n}x ${R(r.parc)}`,`total ${R(r.total)}`);
+  g+=arrow(582,135,746,v?`à vista ${R(r.cons)}`:`${r.n}x ${R(r.rep)}`,v?`desconto de ${R(r.des)} (CDI + ${P2(p.spr)}% a.m.)`:`sem juros, total ${R(r.cons)}`);
+  g+=`<line x1="480" y1="182" x2="480" y2="246" stroke="#9b3b2b" stroke-width="2.5" marker-end="url(#ar)"/><text x="494" y="212" font-size="12.5" font-weight="700" fill="#9b3b2b">bancarização ${R(r.ccb)}</text><text x="494" y="230" font-size="11.5" fill="#6E6F57">emissão da CCB, ${P2(p.ccb)}%</text>`;
+  g+=`<rect x="380" y="252" width="200" height="66" fill="#343933"/><text x="480" y="278" text-anchor="middle" font-size="12" fill="#D5DE45">fica na Financeira</text><text x="480" y="304" text-anchor="middle" font-family="Instrument Serif" font-size="24" fill="#fff">${R(r.fin)}</text>`;
+  if(v){g+=`<rect x="380" y="0" width="200" height="52" fill="#fff" stroke="#343933"/><text x="480" y="22" text-anchor="middle" font-family="Instrument Serif" font-size="19">Quem empresta</text><text x="480" y="40" text-anchor="middle" font-size="11">Trinus, sócio ou grupo</text>`;
+    g+=`<line x1="450" y1="54" x2="450" y2="86" stroke="#343933" stroke-width="2" marker-end="url(#ah)"/><text x="442" y="74" text-anchor="end" font-size="11.5">empresta ${R(r.emp)}</text>`;
+    g+=`<line x1="510" y1="88" x2="510" y2="56" stroke="#9b3b2b" stroke-width="2" marker-end="url(#ar)"/><text x="518" y="74" font-size="11.5" fill="#9b3b2b">devolve + ${R(r.jf)} de juros</text>`;}
+  $('flow').innerHTML=g;$('flow').setAttribute('viewBox',v?'0 0 960 330':'0 78 960 252');
+}
+function render(){
+  const p=get();$('boxVista').className=p.modo==='vista'?'':'off';
+  const rows=[];for(let n=12;n<=p.nmax;n+=6)rows.push(calc(n,p));
+  const ok=rows.filter(r=>r.parc>=p.pmin&&r.parc<=p.pmax),sug=ok[0];
+  if(!sel||!rows.find(r=>r.n===sel))sel=sug?sug.n:rows[rows.length-1].n;
+  $('tab').querySelector('tbody').innerHTML=rows.map(r=>{const inn=r.parc>=p.pmin&&r.parc<=p.pmax;
+    return `<tr class="${inn?'':'out'} ${sug&&r.n===sug.n?'sug':''} ${r.n===sel?'sel':''}" data-n="${r.n}"><td>${r.n}x${sug&&r.n===sug.n?'<span class="tag">sugerido</span>':''}</td><td>${R(r.parc)}</td><td>${R(r.total)}</td><td>${R(r.juros)}</td><td>${R(r.fin)}</td></tr>`}).join('');
+  document.querySelectorAll('#tab tbody tr').forEach(tr=>tr.onclick=()=>{sel=+tr.dataset.n;render()});
+  const r=rows.find(x=>x.n===sel),v=p.modo==='vista';
+  flow(r,p);
+  if(sug){$('sug').innerHTML=`<div class="hero"><div><div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700">Contrato sugerido</div><div style="font-family:'Instrument Serif';font-size:40px;line-height:1.05">${sug.n}x de ${R(sug.parc)}</div><div style="font-size:12.5px">o menor prazo com parcela entre ${R(p.pmin)} e ${R(p.pmax)}</div></div><div><div style="font-size:12px">Juros ao mês</div><b style="font-size:18px">${P2(sug.tj)}% a.m.</b></div><div><div style="font-size:12px">Comprador paga no total</div><b style="font-size:18px">${R(sug.total)}</b></div><div><div style="font-size:12px">Ganho real da Financeira</div><b style="font-size:18px">${R(sug.real)}</b></div></div>${r.n!==sug.n?`<p class="hint" style="margin-top:6px">Abaixo, você está vendo ${r.n}x, escolhido na tabela de prazos.</p>`:''}`}
+  else{const nm=rows[rows.length-1];$('sug').innerHTML=`<div style="background:#f6e0d8;color:#7a2c1c;padding:16px 20px;border-top:3px solid #9b3b2b"><b>Nenhum prazo até ${p.nmax} meses deixa a parcela entre ${R(p.pmin)} e ${R(p.pmax)}.</b> Em ${nm.n}x a parcela fica em ${R(nm.parc)}. Suba a parcela máxima, o prazo máximo ou peça uma entrada maior.</div>`}
+  $('resumo').innerHTML=`${new Date().toLocaleDateString('pt-BR')} · Saldo ${R(p.saldo)} · ${r.n}x de ${R(r.parc)} a ${P2(r.tj)}% a.m. · bancarização ${P2(p.ccb)}% · Construtora recebe ${v?'à vista, antecipação a CDI + '+P2(p.spr)+'% a.m., dinheiro a '+P2(p.pcdi)+'% do CDI':'por mês, sem juros'} · sem custos fixos`;
+  $('cards').innerHTML=`
+   <div class="card"><h4>Comprador</h4><div class="big">${R(r.parc)}</div><div class="cap">por mês, fixa, por ${r.n} meses</div>
+    <table><tr><td>Saldo refinanciado</td><td>${R(p.saldo)}</td></tr><tr><td>Juros (${P2(r.tj)}% a.m.)</td><td>${R(r.juros)}</td></tr><tr class="tot"><td>Paga no total</td><td>${R(r.total)}</td></tr></table></div>
+   <div class="card"><h4>EBS Construtora</h4><div class="big">${R(r.cons)}</div><div class="cap">${v?'à vista, na assinatura':r.n+'x de '+R(r.rep)+', sem juros'}</div>
+    <table><tr><td>Saldo do contrato</td><td>${R(p.saldo)}</td></tr><tr><td>Desconto da antecipação</td><td class="neg">${v?'− '+R(r.des):R(0)}</td></tr><tr class="tot"><td>Recebe</td><td>${R(r.cons)}</td></tr></table></div>
+   <div class="card hi"><h4>Financeira EBS</h4><div class="big">${R(r.fin)}</div><div class="cap">${R(r.fin/r.n)} por mês, em média</div>
+    <table><tr><td>Juros pagos pelo comprador</td><td>${R(r.juros)}</td></tr>${v?`<tr><td>Receita de antecipação</td><td>${R(r.des)}</td></tr><tr><td>Juros do dinheiro emprestado</td><td class="neg">− ${R(r.jf)}</td></tr>`:''}<tr><td>Bancarização (${P2(p.ccb)}%)</td><td class="neg">− ${R(r.ccb)}</td></tr><tr class="tot"><td>Fica na Financeira</td><td>${R(r.fin)}</td></tr><tr><td><b>Ganho real</b>, sem a inflação de ${P2(p.ipca)}% a.a.</td><td><b>${R(r.real)}</b></td></tr></table></div>`;
+  const fm=calc(r.n,{...p,modo:'mensal'}),fv=calc(r.n,{...p,modo:'vista'}),spread=r.tj-p.tcap;
+  $('leit').innerHTML=`
+   <div class="lc"><h4>Comprador</h4>
+    <div class="g"><b class="t">Ganha</b>Parcela fixa de ${R(r.parc)}, sem correção por CUB ou IGP-M, e prazo de ${r.n} meses para caber no orçamento.</div>
+    <div class="p"><b class="t">Abre mão</b>Paga ${R(r.juros)} de juros. Hoje, durante a obra, o saldo só corrige pelo CUB, sem juros.</div></div>
+   <div class="lc"><h4>EBS Construtora</h4>
+    <div class="g"><b class="t">Ganha</b>${v?`${R(r.cons)} em caixa no dia da assinatura para tocar a obra.`:`O saldo inteiro, ${R(r.cons)}, sem desconto.`} Deixa de cobrar, renegociar e carregar o risco do comprador.</div>
+    <div class="p"><b class="t">Abre mão</b>${v?`${R(r.des)} de desconto pela antecipação e d`:'D'}o juro do contrato, que passa para a Financeira.</div></div>
+   <div class="lc"><h4>Financeira EBS</h4>
+    <div class="g"><b class="t">Ganha</b>${R(r.fin)} de resultado no contrato${v?'':', sem pôr dinheiro: o comprador paga antes de ela repassar'}.</div>
+    <div class="p"><b class="t">Abre mão</b>Paga ${R(r.ccb)} de bancarização${v?` e ${R(r.jf)} de juros a quem emprestou`:''}. Fica com o risco de inadimplência do comprador.</div></div>`;
+  $('ideal').innerHTML=`<h4>Onde o dinheiro deve ficar</h4>
+   <p><b>Por mês, sem juros, é o ideal.</b> O dinheiro não sai do grupo. A Construtora recebe o saldo cheio, a Financeira não precisa pegar emprestado e o juro inteiro do comprador fica dentro de casa: ${R(fm.fin)} neste contrato.</p>
+   <p><b>À vista, só quando a obra precisa do caixa.</b> Com dinheiro a ${P2(p.pcdi)}% do CDI (${P2(p.tcap)}% a.m.) e juros do comprador a ${P2(r.tj)}% a.m., a diferença é de ${P2(spread)} ponto ao mês. Quem empresta leva ${R(fv.jf)} e a Financeira fica com ${R(fv.fin)}, dos quais ${R(fv.des)} vêm da antecipação cobrada da Construtora. A prazo, ${R(fm.fin)}. ${spread<=0?'Com essas taxas, o dinheiro emprestado custa mais que a CCB.':'O desconto sai da Construtora e entra na Financeira: para o grupo, só vale se a obra precisar do caixa.'}</p>
+   <p><b>A confirmar com o contador.</b> Na SPE, o juro pagaria 4% no RET. Na Financeira, a tributação é outra e maior. O ganho líquido depende desse número.</p>`;
+  $('regras').innerHTML=`
+<span><b>Parcela do comprador.</b> Tabela Price: o saldo de ${R(p.saldo)} vira ${r.n} parcelas fixas de ${R(r.parc)}, com juros de ${P2(r.tj)}% ao mês. A parcela não muda até o fim.</span> <span><b>Prazo sugerido.</b> O simulador testa de 12 a ${p.nmax} meses e sugere o menor prazo em que a parcela cabe entre ${R(p.pmin)} e ${R(p.pmax)}. Prazo menor, menos juros para o comprador.</span> <span><b>Juros.</b> O comprador paga ${R(r.total)} no total. Tirando o saldo, sobram ${R(r.juros)} de juros. Esse dinheiro é da Financeira.</span> <span><b>Bancarização.</b> A Financeira paga ${P2(p.ccb)}% do saldo pela emissão da CCB, uma vez, na assinatura: ${R(r.ccb)}.</span>    ${v?`<span><b>Pagamento à vista à Construtora.</b> A Financeira traz as ${r.n} parcelas de ${R(r.rep)} para hoje, descontando CDI + ${P2(p.spr)}% ao mês (${P2(p.des)}% a.m.). A Construtora recebe ${R(r.cons)} e o desconto de ${R(r.des)} é receita da Financeira.</span> <span><b>Custo do dinheiro.</b> Para pagar à vista, a Financeira usa ${R(r.emp)} de terceiros a ${P2(p.pcdi)}% do CDI (${P2(p.tcap)}% a.m.) e devolve com as parcelas do comprador. Juros pagos: ${R(r.jf)}.</span>`:`<span><b>Pagamento a prazo à Construtora.</b> Todo mês, a Financeira repassa ${R(r.rep)} (o saldo dividido por ${r.n}), sem juros. Como o comprador paga antes, a Financeira não precisa de dinheiro próprio.</span>`}
+<span><b>Resultado da Financeira.</b> Juros${v?' + desconto da antecipação − custo do dinheiro':''} − bancarização = ${R(r.fin)}.</span> <span><b>Ganho real.</b> O mesmo resultado, mês a mês, trazido para o dinheiro de hoje pela inflação de ${P2(p.ipca)}% ao ano (IPCA): ${R(r.real)}.</span> <span><b>Fora da conta.</b> Custos fixos (tecnologia, Trinus, Lerian, FinSquad), impostos e inadimplência.</span>`;
+  const a=r.anos;$('anos').innerHTML=`<thead><tr><th>Ano</th><th>Comprador paga</th><th>Construtora recebe</th>${v?'<th>Volta para quem emprestou</th>':''}<th>Fica na Financeira</th></tr></thead><tbody>`+
+   a.map((y,k)=>`<tr><td>Ano ${k+1}</td><td>${R(y.comp)}</td><td>${R(y.cons)}</td>${v?`<td>${R(y.dev)}</td>`:''}<td>${R(y.fin)}</td></tr>`).join('')+
+   `<tr class="sug"><td>Total</td><td>${R(r.total)}</td><td>${R(r.cons)}</td>${v?`<td>${R(r.emp+r.jf)}</td>`:''}<td>${R(r.fin)}</td></tr></tbody>`;
+}
+document.querySelectorAll('input,select').forEach(i=>i.oninput=render);
+document.querySelectorAll('input.dec').forEach(i=>i.onblur=()=>{i.value=P2(num(i.value))});
+document.querySelectorAll('.tb').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tb').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.tp').forEach(t=>t.style.display=t.id===b.dataset.t?'block':'none')});
+const KEY='ebs-simulacoes';
+const lerSalvas=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){return[]}};
+function mostrarSalvas(){const l=lerSalvas();$('salvas').innerHTML=l.length?'<b>Simulações salvas neste aparelho</b>'+l.map((x,k)=>`<button data-k="${k}">${x.nome}</button>`).join(''):'';
+  document.querySelectorAll('#salvas button').forEach(b=>b.onclick=()=>{const x=lerSalvas()[+b.dataset.k];Object.entries(x.campos).forEach(([id,v])=>{if($(id))$(id).value=v});sel=x.sel;render();window.scrollTo({top:0,behavior:'smooth'})});}
+$('btnSalvar').onclick=()=>{const campos={};document.querySelectorAll('.panel input:not([type=file]),.panel select').forEach(i=>campos[i.id]=i.value);
+  const p=get(),r=calc(sel,p),nome=`${new Date().toLocaleDateString('pt-BR')} · ${R(p.saldo)} · ${r.n}x de ${R(r.parc)} · ${P2(p.tj)}% a.m.`;
+  const l=lerSalvas();l.unshift({nome,campos,sel});try{localStorage.setItem(KEY,JSON.stringify(l.slice(0,10)))}catch(e){}
+  mostrarSalvas();$('btnSalvar').textContent='Simulação salva';setTimeout(()=>$('btnSalvar').textContent='Salvar simulação',1800)};
+mostrarSalvas();
+// leitura do PDF do Sienge (Saldo Devedor Presente), só no navegador
+const BR=t=>parseFloat(t.replace(/\./g,'').replace(',','.'));
+function lerSaldo(txt){
+  const t=txt.replace(/\s+/g,' ');
+  const k=t.indexOf('Total a pagar');if(k<0)throw new Error('Não achei "Total a pagar". Confira se é o relatório Saldo Devedor Presente do Sienge.');
+  const main=t.slice(0,k),nums=t.slice(k).match(/\d{1,3}(?:\.\d{3})*,\d{2}/g)||[];if(nums.length<4)throw new Error('Não consegui ler o total do contrato.');
+  const total=BR(nums[3]);
+  const av=main.indexOf('VALORES A PAGAR (A VENCER)'),vc=main.indexOf('VALORES A PAGAR (VENCIDAS)');
+  const aVencer=av>=0?main.slice(av):'';
+  const mc=aVencer.match(/Financiamento\s*CAIXA\s*(\d{1,3}(?:\.\d{3})*,\d{2})\s*(\d{1,3}(?:\.\d{3})*,\d{2})/);
+  const caixa=mc?BR(mc[2]):0;
+  let venc=0;if(vc>=0){const seg=main.slice(vc,av>vc?av:undefined),m=seg.match(/TOTAIS\s*((?:\d{1,3}(?:\.\d{3})*,\d{2}\s*){4})/);if(m){const v=m[1].match(/\d{1,3}(?:\.\d{3})*,\d{2}/g);venc=BR(v[3])}}
+  const cnt=re=>(aVencer.match(re)||[]).length;
+  const un=(t.match(/Unidade\s+([0-9A-Z]{2,6})\b/)||[])[1]||'';
+  const tg=t.match(/Total geral a pagar\s*((?:\d{1,3}(?:\.\d{3})*,\d{2}\s*){4})/);const geral=tg?BR(tg[1].match(/\d{1,3}(?:\.\d{3})*,\d{2}/g)[3]):total;
+  return {total,caixa,saldo:total-caixa,venc,mens:cnt(/Parcelas Mensais/g),docs:cnt(/Despesas/g),anuais:cnt(/Parcela Anual/g),outros:geral-total,un};
+}
+$('pdf').onchange=async e=>{const f=e.target.files[0];if(!f)return;const box=$('pdfres');box.className='pdfres';box.textContent='Lendo o PDF…';
+  try{if(!window.pdfjsLib)throw new Error('O leitor de PDF não carregou. Verifique a internet e tente de novo.');
+    const doc=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise;let txt='';
+    for(let i=1;i<=doc.numPages;i++){const pg=await doc.getPage(i),c=await pg.getTextContent();txt+=c.items.map(x=>x.str).join(' ')+' '}
+    const d=lerSaldo(txt);$('saldo').value=P2(d.saldo);sel=null;render();
+    box.innerHTML=`<b>Saldo lido: ${R(d.saldo)}</b>${d.un?' · unidade '+d.un:''}<br>Total a pagar do contrato ${R(d.total)}${d.caixa?`, menos o financiamento Caixa de ${R(d.caixa)}, que é pago pelo banco`:''}.<br>Em atraso: ${R(d.venc)}. Faltam ${d.mens} mensais${d.docs?', '+d.docs+' de documentação':''}${d.anuais?' e '+d.anuais+' anuais':''}.${d.outros>0.01?`<br>Outros títulos no PDF (reembolsos): ${R(d.outros)}, fora do saldo.`:''}<br>Confira antes de usar.`;
+  }catch(err){box.className='pdfres err';box.textContent=err.message||'Não consegui ler este PDF.'}
+  e.target.value=''};
+render();
+</script>
+</body></html>
